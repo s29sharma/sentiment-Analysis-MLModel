@@ -5,17 +5,19 @@ word2index = imdb.get_word_index()
 from nltk.tokenize import word_tokenize
 model = load_model('temp_model.sav')
 model._make_predict_function()
-from flask import Flask
+from flask import Flask,request,redirect
 from flask import jsonify
 
 app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    text = "connect is working"
+    print(request.args.get('text'))
+    text = request.args.get('text')
     test = []
     for word in word_tokenize(text):
-        test.append(word2index[word])
+        if word in word2index:
+            test.append(word2index[word])
     x_new = sequence.pad_sequences([test], maxlen=80)
     x = model.predict(x_new)
     val = x[0][0]
